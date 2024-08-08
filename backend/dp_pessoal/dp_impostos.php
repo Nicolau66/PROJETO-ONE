@@ -1,6 +1,6 @@
 <?php
-require_once('../../conexao.php');
-require_once('../../cors.php');
+require_once('../conexao.php');
+require_once('../cors.php');
 
 if ($mysqli->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $mysqli->connect_error]));
@@ -12,37 +12,34 @@ $sql = "
     SELECT 
         empresa.idEmpresa,
         empresa.razaoSocial, 
-        empresa.responsavelFiscal, 
+        empresa.responsavelDp, 
         empresa.formaDeFechamento, 
-        declaracao.idDeclaracao, 
-        declaracao.nomeDeclaracao,
-        mes.idMes,
+        imposto.idImposto, 
+        imposto.nomeImposto,
         mes.mes, 
         mes.ano, 
-        entregadeclaracao.entregue,
+        mes.idMes,
+        entregaimposto.entregue,
         estado.nomeEstado,
         GROUP_CONCAT(empresa_formaenvio.formaEnvio SEPARATOR ', ') AS formaEnvio
     FROM 
-        entregadeclaracao
+        entregaimposto
     JOIN 
-        empresa ON entregadeclaracao.idEmpresa = empresa.idEmpresa
+        empresa ON entregaimposto.idEmpresa = empresa.idEmpresa
     JOIN 
-        declaracao ON entregadeclaracao.idDeclaracao = declaracao.idDeclaracao
+        imposto ON entregaimposto.idImposto = imposto.idImposto
     JOIN 
-        mes ON entregadeclaracao.idMes = mes.idMes
+        mes ON entregaimposto.idMes = mes.idMes
     JOIN 
         estado ON empresa.idEstado = estado.idEstado
-    JOIN 
-        regimetributario ON empresa.idRegimeTributario = regimetributario.idRegimeTributario
     LEFT JOIN 
         empresa_forma_envio_rel ON empresa.idEmpresa = empresa_forma_envio_rel.idEmpresa
     LEFT JOIN 
         empresa_formaenvio ON empresa_forma_envio_rel.idEnvio = empresa_formaenvio.idEnvio
     WHERE 
-        regimetributario.tipoRegime = 'Lucro Presumido' AND 
-        declaracao.departamento = 'Fiscal'
+        imposto.departamento = 'Pessoal'
     GROUP BY 
-        empresa.idEmpresa, declaracao.idDeclaracao, mes.idMes, mes.mes, mes.ano
+        empresa.idEmpresa, imposto.idImposto, mes.idMes
 ";
 
 $result = $mysqli->query($sql);
@@ -55,17 +52,17 @@ if ($result === false) {
 $data = [];
 
 if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $data[] = [
             "idEmpresa" => $row["idEmpresa"],
             "razaoSocial" => $row["razaoSocial"],
-            "responsavelFiscal" => $row["responsavelFiscal"],
+            "responsavelDp" => $row["responsavelDp"],
             "formaDeFechamento" => $row["formaDeFechamento"],
-            "idDeclaracao" => $row["idDeclaracao"],
-            "nomeDeclaracao" => $row["nomeDeclaracao"],
-            "idMes" => $row["idMes"],   /* Adiciona idMes ao array de dados */
+            "idImposto" => $row["idImposto"],
+            "nomeImposto" => $row["nomeImposto"],
             "mes" => $row["mes"],
             "ano" => $row["ano"],
+            "idMes" => $row["idMes"],
             "entregue" => $row["entregue"] ? true : false,
             "nomeEstado" => $row["nomeEstado"],
             "formaEnvio" => $row["formaEnvio"]

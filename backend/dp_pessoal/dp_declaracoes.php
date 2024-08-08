@@ -1,6 +1,6 @@
 <?php
-require_once('../../conexao.php');
-require_once('../../cors.php');
+require_once('../conexao.php');
+require_once('../cors.php');
 
 if ($mysqli->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $mysqli->connect_error]));
@@ -12,10 +12,10 @@ $sql = "
     SELECT 
         empresa.idEmpresa,
         empresa.razaoSocial, 
-        empresa.responsavelFiscal, 
+        empresa.responsavelDp, 
         empresa.formaDeFechamento, 
         declaracao.idDeclaracao, 
-        declaracao.nomeDeclaracao,
+        declaracao.nomeDeclaracao, 
         mes.idMes,
         mes.mes, 
         mes.ano, 
@@ -32,15 +32,12 @@ $sql = "
         mes ON entregadeclaracao.idMes = mes.idMes
     JOIN 
         estado ON empresa.idEstado = estado.idEstado
-    JOIN 
-        regimetributario ON empresa.idRegimeTributario = regimetributario.idRegimeTributario
     LEFT JOIN 
         empresa_forma_envio_rel ON empresa.idEmpresa = empresa_forma_envio_rel.idEmpresa
     LEFT JOIN 
         empresa_formaenvio ON empresa_forma_envio_rel.idEnvio = empresa_formaenvio.idEnvio
     WHERE 
-        regimetributario.tipoRegime = 'Lucro Presumido' AND 
-        declaracao.departamento = 'Fiscal'
+        declaracao.departamento = 'Pessoal'
     GROUP BY 
         empresa.idEmpresa, declaracao.idDeclaracao, mes.idMes, mes.mes, mes.ano
 ";
@@ -55,15 +52,15 @@ if ($result === false) {
 $data = [];
 
 if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $data[] = [
             "idEmpresa" => $row["idEmpresa"],
             "razaoSocial" => $row["razaoSocial"],
-            "responsavelFiscal" => $row["responsavelFiscal"],
+            "responsavelDp" => $row["responsavelDp"],
             "formaDeFechamento" => $row["formaDeFechamento"],
             "idDeclaracao" => $row["idDeclaracao"],
             "nomeDeclaracao" => $row["nomeDeclaracao"],
-            "idMes" => $row["idMes"],   /* Adiciona idMes ao array de dados */
+            "idMes" => $row["idMes"], // Adicionado idMes
             "mes" => $row["mes"],
             "ano" => $row["ano"],
             "entregue" => $row["entregue"] ? true : false,

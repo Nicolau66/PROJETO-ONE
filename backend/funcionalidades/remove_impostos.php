@@ -1,6 +1,6 @@
 <?php
-require_once('../../conexao.php');
-require_once('../../cors.php');
+require_once('../conexao.php');
+require_once('../cors.php');
 
 header('Content-Type: application/json');
 

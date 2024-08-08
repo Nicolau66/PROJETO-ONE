@@ -12,15 +12,15 @@
           </div>
           <div class="mb-4">
             <label for="cnpj" class="block text-gray-800 dark:text-gray-300">Nº CNPJ</label>
-            <input type="number" v-model="empresa.cnpj" name="cnpj" id="cnpj" class="form-input mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100" required />
+            <input type="text" v-model="empresa.cnpj" name="cnpj" id="cnpj" class="form-input mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100" required />
           </div>
           <div class="mb-4">
-            <label for="inscricaoEstadual" class="block text-gray-800 dark:text-gray-300">Inscrição Estadual</label>
-            <input type="number" v-model="empresa.inscricaoEstadual" name="inscricaoEstadual" id="inscricaoEstadual" class="form-input mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100" required />
+            <label for="inscricaoEstadual" class="block text-gray-800 dark:text-gray-300">Inscriçãoo Estadual</label>
+            <input type="text" v-model="empresa.inscricaoEstadual" name="inscricaoEstadual" id="inscricaoEstadual" class="form-input mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100" required />
           </div>
           <div class="mb-4">
             <label for="telefone" class="block text-gray-800 dark:text-gray-300">Telefone</label>
-            <input type="tel" v-model="empresa.telefone" name="telefone" id="telefone" class="form-input mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100" required />
+            <input type="text" v-model="empresa.telefone" name="telefone" id="telefone" class="form-input mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100" required />
           </div>
           <div class="mb-4">
             <label for="idEstado" class="block text-gray-800 dark:text-gray-300">UF</label>
@@ -66,9 +66,10 @@
           <div class="mb-4">
             <label for="formaDeFechamento" class="block text-gray-800 dark:text-gray-300">Forma de Fechamento</label>
             <select v-model="empresa.formaDeFechamento" id="formaDeFechamento" name="formaDeFechamento" class="form-select mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100">
-              <option value="Cartão">Cartão</option>
+              <option value="CartÃ£o">CartÃ£o</option>
               <option value="Nota Fiscal">Nota Fiscal</option>
-              <option value="Média">Média</option>
+              <option value="MÃ©dia">MÃ©dia</option>  
+              <option value="Sem Movimento">Sem Movimento</option>
             </select>
           </div>
           <!-- Checkbox -->
@@ -78,12 +79,10 @@
             <label for="bordered-checkbox-3" class="ml-2 text-gray-800 dark:text-gray-300">Certificado Emitido?</label>
           </div>
           <div class="mb-4 mt-6">
-            <label for="processoAberturaAlteracao" class="block text-gray-800 dark:text-gray-300">Processo</label>
-            <select v-model="empresa.processoAberturaAlteracao" id="processoAberturaAlteracao" name="processoAberturaAlteracao" class="form-select mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100">
-              <option value="Abertura">Abertura</option>
-              <option value="Alteração">Alteração</option>
-            </select>
+         <label for="processoAberturaAlteracao" class="block text-gray-800 dark:text-gray-300">Login Prefeitura</label>
+         <input type="text" v-model="empresa.processoAberturaAlteracao" name="processoAberturaAlteracao" id="processoAberturaAlteracao" class="form-input mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100" required />
           </div>
+
           <div class="mb-4">
             <label for="status" class="block text-gray-800 dark:text-gray-300">Status</label>
             <select v-model="empresa.status" id="status" name="status" class="form-select mt-1 block w-full dark:bg-gray-600 dark:border-gray-500 dark:text-gray-100">
@@ -114,7 +113,7 @@
           <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
         </div>
 
-        <!-- Conteúdo do modal -->
+        <!-- ConteÃºdo do modal -->
         <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-middle sm:max-w-lg sm:w-full">
           <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div class="sm:flex sm:items-start">

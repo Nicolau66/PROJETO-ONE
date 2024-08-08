@@ -156,7 +156,6 @@ export default {
       const apiUrl = import.meta.env.VITE_API_URL;
       axios.get(`${apiUrl}/backend/formulario/declaracoes.php`)
         .then(response => {
-          console.log('Declarações recebidas:', response.data);
           this.declaracoes = response.data;
         })
         .catch(error => {
@@ -167,7 +166,6 @@ export default {
       const apiUrl = import.meta.env.VITE_API_URL;
       axios.get(`${apiUrl}/backend/formulario/impostos.php`)
         .then(response => {
-          console.log('Impostos recebidos:', response.data);
           this.impostos = response.data;
         })
         .catch(error => {
@@ -178,7 +176,6 @@ export default {
       const apiUrl = import.meta.env.VITE_API_URL;
       axios.get(`${apiUrl}/backend/formulario/mes.php`)
         .then(response => {
-          console.log('Meses recebidos:', response.data);
           this.meses = response.data;
         })
         .catch(error => {
@@ -187,50 +184,38 @@ export default {
     },
     addDeclaracao() {
       const apiUrl = import.meta.env.VITE_API_URL;
-      console.log('Dados a serem enviados (Declaração):', this.newDeclaracao);
       axios.post(`${apiUrl}/backend/cadastros/addDeclaracão.php`, this.newDeclaracao)
         .then(response => {
-          console.log('Declaração adicionada:', response.data);
           this.declaracoes.push(response.data);
           this.newDeclaracao.nomeDeclaracao = '';
           this.newDeclaracao.departamento = 'Fiscal';
         })
         .catch(error => {
           console.error('Erro ao adicionar declaração:', error);
-          console.error('Status da resposta:', error.response ? error.response.status : 'Sem resposta');
-          console.error('Dados da resposta:', error.response ? error.response.data : 'Sem resposta');
         });
     },
     addImposto() {
       const apiUrl = import.meta.env.VITE_API_URL;
-      console.log('Dados a serem enviados (Imposto):', this.newImposto);
       axios.post(`${apiUrl}/backend/cadastros/addImposto.php`, this.newImposto)
         .then(response => {
-          console.log('Imposto adicionado:', response.data);
           this.impostos.push(response.data);
           this.newImposto.nomeImposto = '';
           this.newImposto.departamento = 'Fiscal';
         })
         .catch(error => {
           console.error('Erro ao adicionar imposto:', error);
-          console.error('Status da resposta:', error.response ? error.response.status : 'Sem resposta');
-          console.error('Dados da resposta:', error.response ? error.response.data : 'Sem resposta');
         });
     },
     addMes() {
       const apiUrl = import.meta.env.VITE_API_URL;
-      console.log('Dados a serem enviados (Mês):', this.newMes);
       axios.post(`${apiUrl}/backend/cadastros/addMes.php`, this.newMes)
         .then(response => {
-          console.log('Mês adicionado:', response.data);
           this.meses.push(response.data);
           this.newMes.mes = '';
           this.newMes.ano = '';
         })
         .catch(error => {
           console.error('Erro ao adicionar mês:', error);
-          console.error('Status da resposta:', error.response ? error.response.status : 'Sem resposta');
-          console.error('Dados da resposta:', error.response ? error.response.data : 'Sem resposta');
         });
     },
     updateDeclaracao(declaracao) {
@@ -267,7 +252,6 @@ export default {
       const apiUrl = import.meta.env.VITE_API_URL;
       axios.delete(`${apiUrl}/backend/cadastros/deleteDeclaracao.php`, { data: { idDeclaracao } })
         .then(response => {
-          console.log('Declaração removida com sucesso:', response.data);
           this.declaracoes = this.declaracoes.filter(declaracao => declaracao.idDeclaracao !== idDeclaracao);
         })
         .catch(error => {
@@ -275,8 +259,6 @@ export default {
             this.showModal = true;
           } else {
             console.error('Erro ao remover declaração:', error);
-            console.error('Status da resposta:', error.response ? error.response.status : 'Sem resposta');
-            console.error('Dados da resposta:', error.response ? error.response.data : 'Sem resposta');
           }
         });
     },
@@ -284,7 +266,6 @@ export default {
       const apiUrl = import.meta.env.VITE_API_URL;
       axios.delete(`${apiUrl}/backend/cadastros/deleteImposto.php`, { data: { idImposto } })
         .then(response => {
-          console.log('Imposto removido com sucesso:', response.data);
           this.impostos = this.impostos.filter(imposto => imposto.idImposto !== idImposto);
         })
         .catch(error => {
@@ -292,8 +273,6 @@ export default {
             this.showModal = true;
           } else {
             console.error('Erro ao remover imposto:', error);
-            console.error('Status da resposta:', error.response ? error.response.status : 'Sem resposta');
-            console.error('Dados da resposta:', error.response ? error.response.data : 'Sem resposta');
           }
         });
     },
@@ -301,7 +280,6 @@ export default {
       const apiUrl = import.meta.env.VITE_API_URL;
       axios.delete(`${apiUrl}/backend/cadastros/deleteMes.php`, { data: { idMes } })
         .then(response => {
-          console.log('Mês removido com sucesso:', response.data);
           this.meses = this.meses.filter(mes => mes.idMes !== idMes);
         })
         .catch(error => {
@@ -309,8 +287,6 @@ export default {
             this.showModal = true;
           } else {
             console.error('Erro ao remover mês:', error);
-            console.error('Status da resposta:', error.response ? error.response.status : 'Sem resposta');
-            console.error('Dados da resposta:', error.response ? error.response.data : 'Sem resposta');
           }
         });
     }

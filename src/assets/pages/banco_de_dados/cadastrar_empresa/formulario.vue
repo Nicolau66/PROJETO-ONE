@@ -17,6 +17,7 @@
             <input id="bordered-checkbox-2" type="checkbox" name="possuiServicos" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
             <label for="bordered-checkbox-2" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Possui Serviços?</label>
           </div>
+          <br>
           <h3 class="mb-5 text-lg font-medium text-gray-900 dark:text-white">Selecione o regime tributário:</h3>
           <CustomSelect id="underline_select_uf" name="idRegimeTributario" label="Regime Tributario" :options="regime.map(regime => ({ value: regime.idRegimeTributario, text: regime.tipoRegime }))" required />
         </div>
@@ -29,17 +30,16 @@
             { value: '', text: 'Forma de Fechamento' },
             { value: 'Cartão', text: 'Cartão' },
             { value: 'Nota Fiscal', text: 'Nota Fiscal' },
-            { value: 'Média', text: 'Média' }
+            { value: 'Média', text: 'Média' },
+            { value: 'Sem Movimento', text: 'Sem Movimento' }
           ]" required />
           <div class="flex items-center ps-4 border border-gray-200 rounded dark:border-gray-700 mt-2">
             <input id="bordered-checkbox-3" type="checkbox" value="1" name="certificadoEmitido" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
             <label for="bordered-checkbox-3" class="w-full py-4 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Certificado Emitido?</label>
           </div>
-          <CustomSelect id="process_type" name="processoAberturaAlteracao" label="Processo" :options="[
-            { value: '', text: 'Processo' },
-            { value: 'Abertura', text: 'Abertura' },
-            { value: 'Alteração', text: 'Alteração' }
-          ]" required />
+          <br>
+          <CustomInput type="text" name="processoAberturaAlteracao" id="process_type" label="Login Prefeitura" required />
+
           <CustomSelect id="status" name="status" label="Status" :options="[
             { value: 'Ativa', text: 'Ativa' },
             { value: 'Bloqueada', text: 'Bloqueada' }
@@ -54,19 +54,23 @@
               {{ declaracao.nomeDeclaracao }}
             </option>
           </select>
+          <br>
           <label for="impostos_multiple" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selecione os impostos</label>
           <select multiple id="impostos_multiple" name="impostos[]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             <option v-for="imposto in impostos" :key="imposto.idImposto" :value="imposto.idImposto">
               {{ imposto.nomeImposto }}
             </option>
           </select>
+          <br>
           <label for="forma_envio_multiple" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Selecione a forma de envio</label>
           <select multiple id="forma_envio_multiple" name="formaEnvio[]" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
             <option v-for="envio in envio" :key="envio.idEnvio" :value="envio.idEnvio">
               {{ envio.formaEnvio }}
             </option>
+            <br>
           </select>
-          <CustomSelect id="underline_select_mes" name="mes" label="Mês e Ano" :options="mes.map(m => ({ value: m.idMes, text: `${m.mes} ${m.ano}` }))" required />
+          <br>
+          <CustomSelect id="underline_select_mes" name="mes" label="Mes e Ano" :options="mes.map(m => ({ value: m.idMes, text: `${m.mes} ${m.ano}` }))" required />
         </div>
       </div>
       <div class="text-center mt-4">
@@ -165,7 +169,7 @@ export default {
           });
         })
         .catch(error => {
-          console.error('Erro na requisição:', error);
+          console.error('Erro na requisiÃ§Ã£o:', error);
           Swal.fire({
             title: 'Erro!',
             text: 'Houve um problema ao cadastrar a empresa.',

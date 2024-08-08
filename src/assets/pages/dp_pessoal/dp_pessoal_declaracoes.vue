@@ -2,10 +2,10 @@
   <div class="container mx-auto p-4 dark:text-white" id="containerOne">
     <div class="overflow-x-auto mt-1">
       <div class="flex justify-center items-center mb-8">
-        <img src="/src/assets/img/banco_de_dados/formulario/LogoSimples.png" id="logo1">
-        <h2 class="text-3xl font-bold">Declarações do Simples Nacional</h2>
+        <img src="/src/assets/img/banco_de_dados/formulario/logoDp.png" id="logo1">
+        <h2 class="text-3xl font-bold">Declarações Departamento Pessoal</h2>
       </div>
-      <p class="text-center text-gray-500">Gerencie as declarações das empresas cadastradas no Lucro Presumido de forma fácil e eficiente.</p>
+      <p class="text-center text-gray-500">Gerencie as declarações das empresas cadastradas de forma fácil e eficiente.</p>
       <br>
       <br>
       <div class="flex justify-between items-center mb-4">
@@ -30,38 +30,38 @@
         </form>
         <div class="flex space-x-4">
           <div class="buttonAlternar">
-            <router-link to="/simples_nacional_impostos" class="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded bg-sky-400">
+            <router-link to="/dp_pessoal" class="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded bg-sky-600">
               Ir para Impostos
             </router-link>
           </div>
           <!-- Mês -->
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Mês</label>
-            <select v-model="filters.mes" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+            <select v-model="dpFilters.mes" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
               <option v-for="option in uniqueValues('mes')" :key="option" :value="option">{{ option }}</option>
             </select>
           </div>
           <!-- Ano -->
           <div>
             <label class="block text-sm font-medium text-gray-300 mb-1">Ano</label>
-            <select v-model="filters.ano" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+            <select v-model="dpFilters.ano" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
               <option v-for="option in uniqueValues('ano')" :key="option" :value="option">{{ option }}</option>
             </select>
           </div>
           <!-- Entregue -->
           <div class="flex items-center">
             <label class="block text-sm font-medium text-gray-300 mb-1 mr-2">Entregue</label>
-            <input type="checkbox" v-model="filters.entregue" @change="saveFilters" class="bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            <input type="checkbox" v-model="dpFilters.entregue" @change="saveFilters" class="small-checkbox bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
           </div>
           <!-- Não Entregue -->
           <div class="flex items-center">
             <label class="block text-sm font-medium text-gray-300 mb-1 mr-2">Não Entregue</label>
-            <input type="checkbox" v-model="filters.naoEntregue" @change="saveFilters" class="bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            <input type="checkbox" v-model="dpFilters.naoEntregue" @change="saveFilters" class="small-checkbox bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
           </div>
           <!-- Favoritos -->
           <div class="flex items-center">
             <label class="block text-sm font-medium text-gray-300 mb-1 mr-2">Favoritos</label>
-            <input type="checkbox" v-model="filters.favoritos" @change="saveFilters" class="bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            <input type="checkbox" v-model="dpFilters.favoritos" @change="saveFilters" class="small-checkbox bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
           </div>
         </div>
       </div>
@@ -72,12 +72,12 @@
             <th class="py-3 px-6 text-left">Empresa</th>
             <th class="py-3 px-6 text-left">Estado</th>
             <th class="py-3 px-6 text-left">Responsável</th>
-            <th class="py-3 px-6 text-left">Fechamento</th>
             <th class="py-3 px-6 text-left">Declaração</th>
             <th class="py-3 px-6 text-left">Mês</th>
             <th class="py-3 px-6 text-left">Ano</th>
             <th class="py-3 px-6 text-center">Entregue</th>
             <th class="py-3 px-6 text-center bg-red-700">Dispensar</th>
+            <th class="py-3 px-6 text-center">Comentário</th>
             <th class="py-3 px-6 text-center">Detalhes</th>
           </tr>
         </thead>
@@ -86,14 +86,13 @@
             <td class="py-3 px-6 text-left">
               <span @click="toggleFavorito(empresa)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="{'text-yellow-500': empresa.favorito, 'text-gray-500': !empresa.favorito}">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v2m8-2v2m-7 6h6m-6 4h3m-3 4h3m2-14l-1 4m-2 0H9m4 0h3m-5-6h-1v6h1m-2-6H9v6h2M7 16h10l-1 4H8l-1-4zm0 0h10l-1 4H8l-1-4z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v2m8-2v2m-7 6h6m-6 4h3m-3 4h3m2-14l-1 4m-2 0H9m4 0h3m-5-6h-1v6h1m-2-6H9v6h2M7 16h10l-1 4H8l-1-4z"/>
                 </svg>
               </span>
             </td>
             <td class="py-3 px-6 text-left">{{ empresa.razaoSocial }}</td>
             <td class="py-3 px-6 text-left">{{ empresa.nomeEstado }}</td>
-            <td class="py-3 px-6 text-left">{{ empresa.responsavelFiscal }}</td>
-            <td class="py-3 px-6 text-left">{{ empresa.formaDeFechamento }}</td>
+            <td class="py-3 px-6 text-left">{{ empresa.responsavelDp }}</td>
             <td class="py-3 px-6 text-left">
               <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
                 {{ declaracao.nomeDeclaracao }}
@@ -111,17 +110,24 @@
             </td>
             <td class="py-3 px-6 text-center">
               <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
-                <input type="checkbox" v-model="declaracao.entregue" @change="confirmUpdateEntrega(declaracao, empresa.razaoSocial)" class="form-checkbox h-4 w-4 text-sky-600 bg-sky-500"/>
+                <input type="checkbox" v-model="declaracao.entregue" @change="confirmUpdateEntrega(declaracao, empresa.razaoSocial, declaracao.idMes)" class="small-checkbox form-checkbox text-blue-600"/>
               </div>
             </td>
             <td class="py-3 px-6 text-center">
               <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
                 <span @click="confirmRemoveDeclaracao(declaracao, empresa.razaoSocial)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 cursor-pointer hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="small-icon text-red-600 cursor-pointer hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                 </span>
               </div>
+            </td>
+            <td class="py-3 px-6 text-center">
+              <button @click="openCommentModal(empresa)" :class="{'text-yellow-500': empresaTemComentario(empresa.idEmpresa, dpFilters.mes, dpFilters.ano), 'text-gray-500': !empresaTemComentario(empresa.idEmpresa, dpFilters.mes, dpFilters.ano)}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8h1a5 5 0 0 0 5-5V7a5 5 0 0 0-5-5H7a5 5 0 0 0-5 5v8a5 5 0 0 0 5 5z"/>
+                </svg>
+              </button>
             </td>
             <td class="py-3 px-6 text-center">
               <button @click="showDetails(empresa.idEmpresa)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Detalhes</button>
@@ -134,7 +140,7 @@
       </div>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal existente -->
     <div v-if="empresaDetalhes" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-2/3 max-w-4xl modal-content">
         <div class="flex justify-between items-center">
@@ -154,10 +160,34 @@
         <p><strong>Responsável Fiscal:</strong> {{ empresaDetalhes.responsavelFiscal }}</p>
         <p><strong>Responsável DP:</strong> {{ empresaDetalhes.ResponsavelDp }}</p>
         <p><strong>Certificado Emitido:</strong> {{ empresaDetalhes.certificadoEmitido == 1 ? 'Sim' : 'Não' }}</p>
-        <p><strong>Processo de Abertura/Alteração:</strong> {{ empresaDetalhes.processoAberturaAlteracao }}</p>
+        <p><strong>Prefeitura:</strong> {{ empresaDetalhes.processoAberturaAlteracao }}</p>
         <p><strong>Status:</strong> {{ empresaDetalhes.status }}</p>
         <p><strong>Forma de Envio:</strong> {{ empresaDetalhes.formaEnvio }}</p>
-        <p><strong>Forma de Fechamento:</strong> {{ empresaDetalhes.formaDeFechamento }}</p>
+      </div>
+    </div>
+
+    <!-- Modal para comentário -->
+    <div v-if="empresaParaComentar" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-2/3 max-w-4xl modal-content">
+        <div class="flex justify-between items-center">
+          <h2 class="text-2xl font-bold mb-4">Adicionar Comentário</h2>
+          <button @click="fecharCommentModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div>
+          <label for="comentario" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Comentário</label>
+          <textarea 
+            id="comentario" 
+            v-model="empresaParaComentar.comentario"
+            class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            rows="4"
+            placeholder="Digite seu comentário"
+          ></textarea>
+          <button @click="salvarComentario" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Salvar</button>
+        </div>
       </div>
     </div>
 
@@ -167,39 +197,31 @@
         <!-- Estado -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Estado</label>
-          <select v-model="filters.nomeEstado" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+          <select v-model="dpFilters.nomeEstado" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
             <option value="">Todos</option>
             <option v-for="option in uniqueValues('nomeEstado')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
-        <!-- Responsável Fiscal -->
+        <!-- Responsável DP -->
         <div class="w-full mb-4">
-          <label class="block text-lg font-bold text-gray-300 mb-2">Responsável Fiscal</label>
-          <select v-model="filters.responsavelFiscal" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+          <label class="block text-lg font-bold text-gray-300 mb-2">Responsável DP</label>
+          <select v-model="dpFilters.responsavelDp" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
             <option value="">Todos</option>
-            <option v-for="option in uniqueValues('responsavelFiscal')" :key="option" :value="option">{{ option }}</option>
-          </select>
-        </div>
-        <!-- Forma de Fechamento -->
-        <div class="w-full mb-4">
-          <label class="block text-lg font-bold text-gray-300 mb-2">Forma de Fechamento</label>
-          <select v-model="filters.formaDeFechamento" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
-            <option value="">Todas</option>
-            <option v-for="option in uniqueValues('formaDeFechamento')" :key="option" :value="option">{{ option }}</option>
+            <option v-for="option in uniqueValues('responsavelDp')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
         <!-- Declaração -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Declaração</label>
-          <select multiple v-model="filters.nomeDeclaracao" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
-            <option value="">Todas</option>
+          <select multiple v-model="dpFilters.nomeDeclaracao" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+            <option value="">Todos</option>
             <option v-for="option in uniqueValues('nomeDeclaracao')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
         <!-- Forma de Envio -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Forma de Envio</label>
-          <select v-model="filters.formaEnvio" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+          <select multiple v-model="dpFilters.formaEnvio" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
             <option value="">Todos</option>
             <option v-for="option in uniqueValues('formaEnvio')" :key="option" :value="option">{{ option }}</option>
           </select>
@@ -226,48 +248,74 @@ export default {
     return {
       declaracoes: [],
       searchQuery: '',
-      filters: {
+      dpFilters: {
         razaoSocial: '',
         nomeEstado: '',
-        responsavelFiscal: '',
-        formaDeFechamento: '',
+        responsavelDp: '',
         nomeDeclaracao: [],
         mes: '',
         ano: '',
         entregue: false,
         naoEntregue: false,
         favoritos: false,
-        formaEnvio: ''
+        formaEnvio: []
       },
       empresaDetalhes: null,
       isMenuOpen: false,
-      favoritos: []
+      favoritos: [],
+      empresaParaComentar: null,
+      comentarios: {}
     };
   },
   created() {
-    this.fetchDeclaracoes();
+    this.loadDeclaracoesFromCache();
     this.loadFilters();
     this.loadFavoritos();
+    this.fetchDeclaracoes();
   },
   methods: {
     fetchDeclaracoes() {
-      axios.get(`${apiUrl}/backend/dp_fiscal/simples_nacional/sn_declaracoes.php`)
+      axios.get(`${apiUrl}/backend/dp_pessoal/dp_declaracoes.php`)
         .then(response => {
-          console.log('Dados recebidos:', response.data);
           this.declaracoes = response.data.map(declaracao => {
             declaracao.favorito = this.favoritos.includes(declaracao.idEmpresa);
             return declaracao;
           });
+          this.saveDeclaracoesToCache();
+          this.loadComentarios();
         })
         .catch(error => {
           console.error("Houve um erro ao buscar os dados:", error);
         });
     },
     uniqueValues(key) {
-      const values = this.declaracoes.flatMap(declaracao => declaracao[key]?.split(', ') || []);
+      const values = this.declaracoes.flatMap(declaracao => declaracao[key] ? declaracao[key].split(', ') : []);
       return [...new Set(values)];
     },
-    confirmUpdateEntrega(declaracao, razaoSocial) {
+    loadComentarios() {
+      this.declaracoes.forEach(declaracao => {
+        axios.get(`${apiUrl}/backend/funcionalidades/get_comentario.php`, {
+          params: {
+            idEmpresa: declaracao.idEmpresa,
+            mes: this.dpFilters.mes,
+            ano: this.dpFilters.ano
+          }
+        })
+        .then(response => {
+          console.log(`Comentário carregado para empresa ${declaracao.idEmpresa} :`, response.data.comentario);
+          if (response.data.comentario) {
+            this.comentarios[declaracao.idEmpresa] = response.data.comentario;
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao buscar comentário:', error);
+        });
+      });
+    },
+    empresaTemComentario(idEmpresa) {
+      return !!this.comentarios[idEmpresa];
+    },
+    confirmUpdateEntrega(declaracao, razaoSocial, idMes) {
       const statusText = declaracao.entregue ? 'entregue' : 'não entregue';
       Swal.fire({
         title: 'Tem certeza?',
@@ -280,17 +328,23 @@ export default {
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-          this.updateEntrega(declaracao);
+          this.updateEntrega(declaracao, idMes);
         } else {
-          
           declaracao.entregue = !declaracao.entregue;
         }
       });
     },
-    updateEntrega(declaracao) {
-      axios.post(`${apiUrl}/backend/dp_fiscal/simples_nacional/update_entrega.php`, {
+    updateEntrega(declaracao, idMes) {
+      console.log('Dados enviados para update_entrega_declaracao:', {
         idEmpresa: declaracao.idEmpresa,
         idDeclaracao: declaracao.idDeclaracao,
+        idMes: idMes,
+        entregue: declaracao.entregue
+      });
+      axios.post(`${apiUrl}/backend/funcionalidades/update_entrega_declaracao.php`, {
+        idEmpresa: declaracao.idEmpresa,
+        idDeclaracao: declaracao.idDeclaracao,
+        idMes: idMes,
         entregue: declaracao.entregue
       })
       .then(response => {
@@ -298,7 +352,7 @@ export default {
       })
       .catch(error => {
         console.error('Erro ao atualizar status:', error);
-        declaracao.entregue = !declaracao.entregue; 
+        declaracao.entregue = !declaracao.entregue;
       });
     },
     confirmRemoveDeclaracao(declaracao, razaoSocial) {
@@ -318,25 +372,33 @@ export default {
       });
     },
     removeDeclaracao(declaracao) {
-      axios.post(`${apiUrl}/backend/dp_fiscal/simples_nacional/remove_declaracao.php`, {
+      console.log('Dados enviados para remove_declaracoes:', {
         idEmpresa: declaracao.idEmpresa,
         idDeclaracao: declaracao.idDeclaracao,
-        idMes: declaracao.mes
+        idMes: declaracao.idMes
+      });
+      axios.post(`${apiUrl}/backend/funcionalidades/remove_declaracao.php`, {
+        idEmpresa: declaracao.idEmpresa,
+        idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes
       })
       .then(response => {
-        console.log('Declaração removida com sucesso:', response.data);
-        
-        this.declaracoes = this.declaracoes.filter(d => !(d.idEmpresa === declaracao.idEmpresa && d.idDeclaracao === declaracao.idDeclaracao && d.mes === declaracao.mes));
+        if (response.data.success) {
+          this.declaracoes = this.declaracoes.filter(i => !(i.idEmpresa === declaracao.idEmpresa && i.idDeclaracao === declaracao.idDeclaracao && i.idMes === declaracao.idMes));
+          this.saveDeclaracoesToCache();
+        } else {
+          console.error('Erro ao remover declaração:', response.data.error);
+        }
       })
       .catch(error => {
         console.error('Erro ao remover declaração:', error);
       });
     },
     filterBySearchQuery() {
-      this.filters.razaoSocial = this.searchQuery;
+      this.dpFilters.razaoSocial = this.searchQuery;
     },
     showDetails(idEmpresa) {
-      axios.get(`${apiUrl}/backend/dp_fiscal/empresa_detalhes.php?idEmpresa=${idEmpresa}`)
+      axios.get(`${apiUrl}/backend/funcionalidades/empresa_detalhes.php?idEmpresa=${idEmpresa}`)
         .then(response => {
           this.empresaDetalhes = response.data;
         })
@@ -344,23 +406,75 @@ export default {
           console.error("Houve um erro ao buscar os detalhes da empresa:", error);
         });
     },
+    openCommentModal(empresa) {
+      this.empresaParaComentar = { ...empresa, comentario: '' };
+      axios.get(`${apiUrl}/backend/funcionalidades/get_comentario.php`, {
+        params: {
+          idEmpresa: empresa.idEmpresa,
+          mes: this.dpFilters.mes,
+          ano: this.dpFilters.ano
+        }
+      })
+      .then(response => {
+        this.empresaParaComentar.comentario = response.data.comentario || '';
+      })
+      .catch(error => {
+        console.error('Erro ao buscar comentário:', error);
+      });
+    },
+    fecharCommentModal() {
+      this.empresaParaComentar = null;
+    },
+    salvarComentario() {
+      console.log('Dados enviados para salvar_comentario:', {
+        idEmpresa: this.empresaParaComentar.idEmpresa,
+        mes: this.dpFilters.mes,
+        ano: this.dpFilters.ano,
+        comentario: this.empresaParaComentar.comentario
+      });
+      axios.post(`${apiUrl}/backend/funcionalidades/salvar_comentario.php`, {
+        idEmpresa: this.empresaParaComentar.idEmpresa,
+        mes: this.dpFilters.mes,
+        ano: this.dpFilters.ano,
+        comentario: this.empresaParaComentar.comentario
+      })
+      .then(response => {
+        console.log('Comentário salvo com sucesso:', response.data);
+        if (response.data.success) {
+          this.comentarios[this.empresaParaComentar.idEmpresa] = this.empresaParaComentar.comentario;
+        }
+        this.fecharCommentModal();
+      })
+      .catch(error => {
+        console.error('Erro ao salvar comentário:', error);
+      });
+    },
     saveFilters() {
-      const { razaoSocial, ...filtersToSave } = this.filters;
-      localStorage.setItem('filters_declaracoes', JSON.stringify(filtersToSave));
+      const { razaoSocial, ...filtersToSave } = this.dpFilters;
+      localStorage.setItem('dp_filters_declaracoes', JSON.stringify(filtersToSave));
     },
     loadFilters() {
-      const savedFilters = localStorage.getItem('filters_declaracoes');
+      const savedFilters = localStorage.getItem('dp_filters_declaracoes');
       if (savedFilters) {
-        this.filters = { ...this.filters, ...JSON.parse(savedFilters) };
+        this.dpFilters = { ...this.dpFilters, ...JSON.parse(savedFilters) };
       }
     },
     saveFavoritos() {
-      localStorage.setItem('favoritos', JSON.stringify(this.favoritos));
+      localStorage.setItem('favoritos_declaracoes', JSON.stringify(this.favoritos));
     },
     loadFavoritos() {
-      const savedFavoritos = localStorage.getItem('favoritos');
+      const savedFavoritos = localStorage.getItem('favoritos_declaracoes');
       if (savedFavoritos) {
         this.favoritos = JSON.parse(savedFavoritos);
+      }
+    },
+    saveDeclaracoesToCache() {
+      localStorage.setItem('declaracoes_cache', JSON.stringify(this.declaracoes));
+    },
+    loadDeclaracoesFromCache() {
+      const cachedDeclaracoes = localStorage.getItem('declaracoes_cache');
+      if (cachedDeclaracoes) {
+        this.declaracoes = JSON.parse(cachedDeclaracoes);
       }
     },
     toggleFavorito(empresa) {
@@ -371,7 +485,7 @@ export default {
       }
       empresa.favorito = !empresa.favorito;
       this.saveFavoritos();
-      this.$forceUpdate(); 
+      this.$forceUpdate();
     },
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
@@ -380,18 +494,17 @@ export default {
   computed: {
     filteredDeclaracoes() {
       return this.declaracoes.filter(declaracao => {
-        const isEntregueMatch = this.filters.entregue ? declaracao.entregue : true;
-        const isNaoEntregueMatch = this.filters.naoEntregue ? !declaracao.entregue : true;
-        const isNomeDeclaracaoMatch = this.filters.nomeDeclaracao.length === 0 || this.filters.nomeDeclaracao.includes(declaracao.nomeDeclaracao) || this.filters.nomeDeclaracao.includes("");
-        const isFavoritoMatch = this.filters.favoritos ? declaracao.favorito : true;
-        const isFormaEnvioMatch = !this.filters.formaEnvio || (declaracao.formaEnvio && declaracao.formaEnvio.split(', ').includes(this.filters.formaEnvio));
-        return (!this.filters.razaoSocial || declaracao.razaoSocial.toLowerCase().includes(this.filters.razaoSocial.toLowerCase())) &&
-               (!this.filters.nomeEstado || declaracao.nomeEstado === this.filters.nomeEstado) &&
-               (!this.filters.responsavelFiscal || declaracao.responsavelFiscal === this.filters.responsavelFiscal) &&
-               (!this.filters.formaDeFechamento || declaracao.formaDeFechamento === this.filters.formaDeFechamento) &&
+        const isEntregueMatch = this.dpFilters.entregue ? declaracao.entregue : true;
+        const isNaoEntregueMatch = this.dpFilters.naoEntregue ? !declaracao.entregue : true;
+        const isNomeDeclaracaoMatch = this.dpFilters.nomeDeclaracao.length === 0 || this.dpFilters.nomeDeclaracao.includes(declaracao.nomeDeclaracao) || this.dpFilters.nomeDeclaracao.includes("");
+        const isFormaEnvioMatch = this.dpFilters.formaEnvio.length === 0 || (declaracao.formaEnvio && this.dpFilters.formaEnvio.some(envio => declaracao.formaEnvio.includes(envio)));
+        const isFavoritoMatch = this.dpFilters.favoritos ? declaracao.favorito : true;
+        return (!this.dpFilters.razaoSocial || declaracao.razaoSocial.toLowerCase().includes(this.dpFilters.razaoSocial.toLowerCase())) &&
+               (!this.dpFilters.nomeEstado || declaracao.nomeEstado === this.dpFilters.nomeEstado) &&
+               (!this.dpFilters.responsavelDp || declaracao.responsavelDp === this.dpFilters.responsavelDp) &&
                isNomeDeclaracaoMatch &&
-               (!this.filters.mes || declaracao.mes.toString() === this.filters.mes) &&
-               (!this.filters.ano || declaracao.ano.toString() === this.filters.ano) &&
+               (!this.dpFilters.mes || declaracao.mes.toString() === this.dpFilters.mes) &&
+               (!this.dpFilters.ano || declaracao.ano.toString() === this.dpFilters.ano) &&
                isEntregueMatch &&
                isNaoEntregueMatch &&
                isFavoritoMatch &&
@@ -408,10 +521,10 @@ export default {
             idEmpresa: declaracao.idEmpresa,
             razaoSocial: declaracao.razaoSocial,
             nomeEstado: declaracao.nomeEstado,
-            responsavelFiscal: declaracao.responsavelFiscal,
-            formaDeFechamento: declaracao.formaDeFechamento,
+            responsavelDp: declaracao.responsavelDp,
             favorito: declaracao.favorito,
-            declaracoes: [declaracao]
+            declaracoes: [declaracao],
+            comentario: this.comentarios[declaracao.idEmpresa] || null
           });
         }
         return acc;
@@ -424,6 +537,7 @@ export default {
   }
 }
 </script>
+
 
 <style>
 #speed-dial-menu-bottom-right {
@@ -441,13 +555,13 @@ form {
 
 .section {
   width: 500px;
-  background-color: #161616;
+  background-color: #161616; 
   margin-left: 10px;
 }
 
 .card {
   width: 500px;
-  background-color: #1a1a1a; 
+  background-color: #1a1a1a;
 }
 
 .fixed.inset-0 {
@@ -470,5 +584,15 @@ form {
 
 .text-gray-500 {
   color: #6B7280;
+}
+
+.small-checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.small-icon {
+  width: 20px;
+  height: 20px;
 }
 </style>

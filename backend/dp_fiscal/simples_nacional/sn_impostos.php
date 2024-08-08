@@ -2,13 +2,11 @@
 require_once('../../conexao.php');
 require_once('../../cors.php');
 
-
 if ($mysqli->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $mysqli->connect_error]));
 }
 
 header('Content-Type: application/json');
-
 
 $sql = "
     SELECT 
@@ -18,6 +16,7 @@ $sql = "
         empresa.formaDeFechamento, 
         imposto.idImposto, 
         imposto.nomeImposto, 
+        mes.idMes,
         mes.mes, 
         mes.ano, 
         entregaimposto.entregue,
@@ -34,16 +33,16 @@ $sql = "
     JOIN 
         estado ON empresa.idEstado = estado.idEstado
     JOIN 
-        regimeTributario ON empresa.idRegimeTributario = regimeTributario.idRegimeTributario
+        regimetributario ON empresa.idRegimeTributario = regimetributario.idRegimeTributario
     LEFT JOIN 
         empresa_forma_envio_rel ON empresa.idEmpresa = empresa_forma_envio_rel.idEmpresa
     LEFT JOIN 
         empresa_formaenvio ON empresa_forma_envio_rel.idEnvio = empresa_formaenvio.idEnvio
     WHERE 
-        regimeTributario.tipoRegime = 'Simples Nacional'
+        regimetributario.tipoRegime = 'Simples Nacional'
         AND imposto.departamento = 'Fiscal'
     GROUP BY 
-        empresa.idEmpresa, imposto.idImposto, mes.mes, mes.ano
+        empresa.idEmpresa, imposto.idImposto, mes.idMes
 ";
 
 $result = $mysqli->query($sql);
@@ -56,7 +55,6 @@ if ($result === false) {
 $data = [];
 
 if ($result->num_rows > 0) {
-   
     while($row = $result->fetch_assoc()) {
         $data[] = [
             "idEmpresa" => $row["idEmpresa"],
@@ -65,6 +63,7 @@ if ($result->num_rows > 0) {
             "formaDeFechamento" => $row["formaDeFechamento"],
             "idImposto" => $row["idImposto"],
             "nomeImposto" => $row["nomeImposto"],
+            "idMes" => $row["idMes"],  // Adicionado idMes
             "mes" => $row["mes"],
             "ano" => $row["ano"],
             "entregue" => $row["entregue"] ? true : false,
@@ -76,9 +75,7 @@ if ($result->num_rows > 0) {
     $data = ["message" => "Nenhum dado encontrado"];
 }
 
-
 $mysqli->close();
-
 
 echo json_encode($data);
 ?>

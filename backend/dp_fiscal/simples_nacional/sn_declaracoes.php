@@ -17,7 +17,8 @@ $sql = "
         empresa.responsavelFiscal, 
         empresa.formaDeFechamento, 
         declaracao.idDeclaracao, 
-        declaracao.nomeDeclaracao, 
+        declaracao.nomeDeclaracao,
+        mes.idMes,
         mes.mes, 
         mes.ano, 
         entregadeclaracao.entregue,
@@ -65,6 +66,7 @@ if ($result->num_rows > 0) {
             "formaDeFechamento" => $row["formaDeFechamento"],
             "idDeclaracao" => $row["idDeclaracao"],
             "nomeDeclaracao" => $row["nomeDeclaracao"],
+            "idMes" => $row["idMes"],  // Adicionado idMes
             "mes" => $row["mes"],
             "ano" => $row["ano"],
             "entregue" => $row["entregue"] ? true : false,

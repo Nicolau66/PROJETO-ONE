@@ -5,7 +5,7 @@
         <h2 class="text-3xl font-bold">Vincular Empresas a Ano e Mês</h2>
       </div>
       <p class="text-center text-gray-500 mb-8">Vincule todas as empresas cadastradas a um novo ano e mês para criar um fechamento.</p>
-      <form @submit.prevent="vincularEmpresas">
+      <form @submit.prevent="solicitarSenha">
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-300 mb-1">Mês / Ano</label>
           <select v-model="mesAno" required class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
@@ -39,7 +39,8 @@ export default {
       mesAno: '',
       message: '',
       errorMessage: '',
-      meses: []
+      meses: [],
+      senha: '7894566'  
     };
   },
   created() {
@@ -56,9 +57,34 @@ export default {
           this.errorMessage = "Erro ao buscar os meses.";
         });
     },
+    solicitarSenha() {
+      Swal.fire({
+        title: 'Insira a Senha',
+        input: 'password',
+        inputAttributes: {
+          autocapitalize: 'off',
+          autocorrect: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        showLoaderOnConfirm: true,
+        preConfirm: (senha) => {
+          if (senha !== this.senha) {
+            Swal.showValidationMessage('Senha incorreta');
+            return false;
+          }
+          return true;
+        },
+        allowOutsideClick: () => !Swal.isLoading()
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.vincularEmpresas();
+        }
+      });
+    },
     vincularEmpresas() {
       console.log("Enviando dados:", { idMes: this.mesAno });
-      axios.post(`${apiUrl}/backend/dp_fiscal/vincular_empresas.php`, {
+      axios.post(`${apiUrl}/backend/funcionalidades/vincular_empresas.php`, {
         idMes: this.mesAno
       })
       .then(response => {

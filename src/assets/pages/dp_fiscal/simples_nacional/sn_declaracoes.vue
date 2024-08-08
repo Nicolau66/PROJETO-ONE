@@ -2,10 +2,10 @@
   <div class="container mx-auto p-4 dark:text-white" id="containerOne">
     <div class="overflow-x-auto mt-1">
       <div class="flex justify-center items-center mb-8">
-        <img src="/src/assets/img/banco_de_dados/formulario/LogoLucroPresumido.png" id="logo1">
-        <h2 class="text-3xl font-bold">Impostos do Lucro Presumido</h2>
+        <img src="/src/assets/img/banco_de_dados/formulario/LogoSimples.png" id="logo1">
+        <h2 class="text-3xl font-bold">Declarações do Simples Nacional</h2>
       </div>
-      <p class="text-center text-gray-500">Gerencie os impostos das empresas cadastradas no Lucro Presumido de forma fácil e eficiente.</p>
+      <p class="text-center text-gray-500">Gerencie as declarações das empresas cadastradas no Simples Nacional de forma fácil e eficiente.</p>
       <br>
       <br>
       <div class="flex justify-between items-center mb-4">
@@ -30,8 +30,8 @@
         </form>
         <div class="flex space-x-4">
           <div class="buttonAlternar">
-            <router-link to="/lucro_presumido" class="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded bg-sky-400">
-              Ir para declarações
+            <router-link to="/simples_nacional_impostos" class="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded bg-sky-400">
+              Ir para Impostos
             </router-link>
           </div>
           <!-- Mês -->
@@ -73,17 +73,16 @@
             <th class="py-3 px-6 text-left">Estado</th>
             <th class="py-3 px-6 text-left">Responsável</th>
             <th class="py-3 px-6 text-left">Fechamento</th>
-            <th class="py-3 px-6 text-left">Imposto</th>
+            <th class="py-3 px-6 text-left">Declaração</th>
             <th class="py-3 px-6 text-left">Mês</th>
             <th class="py-3 px-6 text-left">Ano</th>
-            <th class="py-3 px-6 text-left">Valor</th>
             <th class="py-3 px-6 text-center">Entregue</th>
             <th class="py-3 px-6 text-center bg-red-700">Dispensar</th>
             <th class="py-3 px-6 text-center">Detalhes</th>
           </tr>
         </thead>
         <tbody class="text-gray-400 text-sm font-light">
-          <tr v-for="empresa in groupedImpostos" :key="empresa.idEmpresa" class="border-b border-gray-600 hover:bg-gray-700">
+          <tr v-for="empresa in groupedDeclaracoes" :key="empresa.idEmpresa" class="border-b border-gray-600 hover:bg-gray-700">
             <td class="py-3 px-6 text-left">
               <span @click="toggleFavorito(empresa)">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" :class="{'text-yellow-500': empresa.favorito, 'text-gray-500': !empresa.favorito}">
@@ -96,33 +95,28 @@
             <td class="py-3 px-6 text-left">{{ empresa.responsavelFiscal }}</td>
             <td class="py-3 px-6 text-left">{{ empresa.formaDeFechamento }}</td>
             <td class="py-3 px-6 text-left">
-              <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                {{ imposto.nomeImposto }}
+              <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
+                {{ declaracao.nomeDeclaracao }}
               </div>
             </td>
             <td class="py-3 px-6 text-left">
-              <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                {{ imposto.mes }}
+              <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
+                {{ declaracao.mes }}
               </div>
             </td>
             <td class="py-3 px-6 text-left">
-              <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                {{ imposto.ano }}
-              </div>
-            </td>
-            <td class="py-3 px-6 text-left">
-              <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                <button @click="openModal(imposto, empresa.idEmpresa)" class="text-blue-500 hover:text-blue-700">Valor</button>
+              <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
+                {{ declaracao.ano }}
               </div>
             </td>
             <td class="py-3 px-6 text-center">
-              <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                <input type="checkbox" v-model="imposto.entregue" @change="confirmUpdateEntrega(imposto, empresa.razaoSocial)" class="small-checkbox form-checkbox text-blue-600"/>
+              <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
+                <input type="checkbox" v-model="declaracao.entregue" @change="confirmUpdateEntrega(declaracao, empresa.razaoSocial)" class="form-checkbox h-4 w-4 text-sky-600 bg-sky-500"/>
               </div>
             </td>
             <td class="py-3 px-6 text-center">
-              <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                <span @click="confirmRemoveImposto(imposto, empresa.razaoSocial)">
+              <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
+                <span @click="confirmRemoveDeclaracao(declaracao, empresa.razaoSocial)">
                   <svg xmlns="http://www.w3.org/2000/svg" class="small-icon text-red-600 cursor-pointer hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
@@ -136,52 +130,11 @@
         </tbody>
       </table>
       <div class="text-white mt-4">
-        <strong>Impostos Não Entregues: {{ naoEntreguesCount }}</strong>
+        <strong>Declarações Não Entregues: {{ naoEntreguesCount }}</strong>
       </div>
     </div>
 
-    <!-- Modal para editar o valor do imposto -->
-    <div v-if="impostoParaEditar" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-2/3 max-w-4xl modal-content">
-        <div class="flex justify-between items-center">
-          <h2 class="text-2xl font-bold mb-4">Editar Valor do Imposto</h2>
-          <button @click="fecharModal" class="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-500">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <div>
-          <label for="nomeImposto" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Imposto</label>
-          <input 
-            type="text" 
-            id="nomeImposto" 
-            v-model="impostoParaEditar.nomeImposto"
-            class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            disabled
-          />
-          <label for="valorImpostoAtual" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mt-4">Valor do Imposto Atual</label>
-          <input 
-            type="text" 
-            id="valorImpostoAtual" 
-            v-model="impostoParaEditar.valorImpostoAtual"
-            class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            disabled
-          />
-          <label for="novoValorImposto" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mt-4">Novo Valor do Imposto</label>
-          <input 
-            type="text" 
-            id="novoValorImposto" 
-            v-model="impostoParaEditar.valorImposto"
-            class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Digite o novo valor do imposto"
-          />
-          <button @click="atualizarValorImposto" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Salvar</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal existente -->
+    <!-- Modal -->
     <div v-if="empresaDetalhes" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-2/3 max-w-4xl modal-content">
         <div class="flex justify-between items-center">
@@ -235,18 +188,18 @@
             <option v-for="option in uniqueValues('formaDeFechamento')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
-        <!-- Imposto -->
+        <!-- Declaração -->
         <div class="w-full mb-4">
-          <label class="block text-lg font-bold text-gray-300 mb-2">Imposto</label>
-          <select multiple v-model="filters.nomeImposto" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
-            <option value="">Todos</option>
-            <option v-for="option in uniqueValues('nomeImposto')" :key="option" :value="option">{{ option }}</option>
+          <label class="block text-lg font-bold text-gray-300 mb-2">Declaração</label>
+          <select multiple v-model="filters.nomeDeclaracao" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+            <option value="">Todas</option>
+            <option v-for="option in uniqueValues('nomeDeclaracao')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
         <!-- Forma de Envio -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Forma de Envio</label>
-          <select multiple v-model="filters.formaEnvio" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
+          <select v-model="filters.formaEnvio" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
             <option value="">Todos</option>
             <option v-for="option in uniqueValues('formaEnvio')" :key="option" :value="option">{{ option }}</option>
           </select>
@@ -271,54 +224,55 @@ const apiUrl = import.meta.env.VITE_API_URL;
 export default {
   data() {
     return {
-      impostos: [],
+      declaracoes: [],
       searchQuery: '',
       filters: {
         razaoSocial: '',
         nomeEstado: '',
         responsavelFiscal: '',
         formaDeFechamento: '',
-        nomeImposto: [],
+        nomeDeclaracao: [],
         mes: '',
         ano: '',
         entregue: false,
         naoEntregue: false,
         favoritos: false,
-        formaEnvio: []
+        formaEnvio: ''
       },
       empresaDetalhes: null,
       isMenuOpen: false,
-      favoritos: [],
-      impostoParaEditar: null
+      favoritos: []
     };
   },
   created() {
-    this.fetchImpostos();
+    this.loadDeclaracoesFromCache();
+    this.fetchDeclaracoes();
     this.loadFilters();
     this.loadFavoritos();
   },
   methods: {
-    fetchImpostos() {
-      axios.get(`${apiUrl}/backend/dp_fiscal/lucro_presumido/lp_impostos.php`)
+    fetchDeclaracoes() {
+      axios.get(`${apiUrl}/backend/dp_fiscal/simples_nacional/sn_declaracoes.php`)
         .then(response => {
-          this.impostos = response.data.map(imposto => {
-            imposto.favorito = this.favoritos.includes(imposto.idEmpresa);
-            return imposto;
+          this.declaracoes = response.data.map(declaracao => {
+            declaracao.favorito = this.favoritos.includes(declaracao.idEmpresa);
+            return declaracao;
           });
+          this.saveDeclaracoesToCache();
         })
         .catch(error => {
           console.error("Houve um erro ao buscar os dados:", error);
         });
     },
     uniqueValues(key) {
-      const values = this.impostos.flatMap(imposto => imposto[key] ? imposto[key].split(', ') : []);
+      const values = this.declaracoes.flatMap(declaracao => declaracao[key]?.split(', ') || []);
       return [...new Set(values)];
     },
-    confirmUpdateEntrega(imposto, razaoSocial) {
-      const statusText = imposto.entregue ? 'entregue' : 'não entregue';
+    confirmUpdateEntrega(declaracao, razaoSocial) {
+      const statusText = declaracao.entregue ? 'entregue' : 'não entregue';
       Swal.fire({
         title: 'Tem certeza?',
-        text: `Você deseja marcar o imposto ${imposto.nomeImposto} da empresa ${razaoSocial} como ${statusText}?`,
+        text: `Você deseja marcar a declaração ${declaracao.nomeDeclaracao} da empresa ${razaoSocial} como ${statusText}?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -327,73 +281,37 @@ export default {
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-          this.updateEntrega(imposto);
+          this.updateEntrega(declaracao);
         } else {
-          imposto.entregue = !imposto.entregue;
+          declaracao.entregue = !declaracao.entregue;
         }
       });
     },
-    updateEntrega(imposto, mes) {
-      axios.post(`${apiUrl}/backend/funcionalidades/update_entrega_imposto.php`, {
-        idEmpresa: imposto.idEmpresa,
-        idImposto: imposto.idImposto,
-        idMes: imposto.idMes,
-        entregue: imposto.entregue
+    updateEntrega(declaracao, mes) {
+      console.log("Enviando dados para atualização:", {
+        idEmpresa: declaracao.idEmpresa,
+        idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes,
+        entregue: declaracao.entregue
+      });
+      axios.post(`${apiUrl}/backend/funcionalidades/update_entrega_declaracao.php`, {
+        idEmpresa: declaracao.idEmpresa,
+        idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes,
+        entregue: declaracao.entregue
       })
       .then(response => {
         console.log('Status atualizado com sucesso:', response.data);
       })
       .catch(error => {
         console.error('Erro ao atualizar status:', error);
-        imposto.entregue = !imposto.entregue;
+        declaracao.entregue = !declaracao.entregue;
       });
     },
-    openModal(imposto, idEmpresa) {
-      this.impostoParaEditar = { ...imposto, idEmpresa: idEmpresa };
-      axios.get(`${apiUrl}/backend/funcionalidades/get_valor_imposto.php`, {
-        params: {
-          idEmpresa: imposto.idEmpresa,
-          idImposto: imposto.idImposto,
-          idMes: imposto.idMes
-        }
-      })
-      .then(response => {
-        this.impostoParaEditar.valorImpostoAtual = response.data.valorImposto || '';
-      })
-      .catch(error => {
-        console.error('Erro ao buscar valor atual do imposto:', error);
-      });
-    },
-    fecharModal() {
-      this.impostoParaEditar = null;
-    },
-    atualizarValorImposto() {
-      axios.post(`${apiUrl}/backend/funcionalidades/update_valor_imposto.php`, {
-        idEmpresa: this.impostoParaEditar.idEmpresa,
-        idImposto: this.impostoParaEditar.idImposto,
-        idMes: this.impostoParaEditar.idMes,
-        valorImposto: this.impostoParaEditar.valorImposto
-      })
-      .then(response => {
-        console.log('Valor do imposto atualizado com sucesso:', response.data);
-        if (response.data.success) {
-          const imposto = this.impostos.find(i => i.idImposto === this.impostoParaEditar.idImposto && i.idEmpresa === this.impostoParaEditar.idEmpresa && i.mes === this.impostoParaEditar.mes);
-          if (imposto) {
-            imposto.valorImposto = this.impostoParaEditar.valorImposto;
-          }
-          this.fecharModal();
-        } else {
-          console.error('Erro na resposta da API:', response.data.error);
-        }
-      })
-      .catch(error => {
-        console.error('Erro ao atualizar valor do imposto:', error);
-      });
-    },
-    confirmRemoveImposto(imposto, razaoSocial) {
+    confirmRemoveDeclaracao(declaracao, razaoSocial) {
       Swal.fire({
         title: 'Tem certeza?',
-        text: `Você deseja dispensar o imposto ${imposto.nomeImposto} da empresa ${razaoSocial} no mês ${imposto.mes}/${imposto.ano}?`,
+        text: `Você deseja dispensar a declaração ${declaracao.nomeDeclaracao} da empresa ${razaoSocial} no mês ${declaracao.mes}/${declaracao.ano}?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -402,22 +320,27 @@ export default {
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-          this.removeImposto(imposto);
+          this.removeDeclaracao(declaracao);
         }
       });
     },
-    removeImposto(imposto, mes) {
-      axios.post(`${apiUrl}/backend/funcionalidades/remove_impostos.php`, {
-        idEmpresa: imposto.idEmpresa,
-        idImposto: imposto.idImposto,
-        idMes: imposto.idMes
+    removeDeclaracao(declaracao, mes) {
+      axios.post(`${apiUrl}/backend/funcionalidades/remove_declaracao.php`, {
+        idEmpresa: declaracao.idEmpresa,
+        idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes
       })
       .then(response => {
-        console.log('Imposto removido com sucesso:', response.data);
-        this.impostos = this.impostos.filter(i => !(i.idEmpresa === imposto.idEmpresa && i.idImposto === imposto.idImposto && i.mes === imposto.mes));
+        console.log('Declaração removida com sucesso:', response.data);
+        if (response.data.success) {
+          this.declaracoes = this.declaracoes.filter(d => !(d.idEmpresa === declaracao.idEmpresa && d.idDeclaracao === declaracao.idDeclaracao && d.mes === declaracao.mes));
+          this.saveDeclaracoesToCache();
+        } else {
+          console.error('Erro ao remover declaração:', response.data.error);
+        }
       })
       .catch(error => {
-        console.error('Erro ao remover imposto:', error);
+        console.error('Erro ao remover declaração:', error);
       });
     },
     filterBySearchQuery() {
@@ -434,21 +357,30 @@ export default {
     },
     saveFilters() {
       const { razaoSocial, ...filtersToSave } = this.filters;
-      localStorage.setItem('filters_lp_impostos', JSON.stringify(filtersToSave));
+      localStorage.setItem('filters_declaracoes', JSON.stringify(filtersToSave));
     },
     loadFilters() {
-      const savedFilters = localStorage.getItem('filters_lp_impostos');
+      const savedFilters = localStorage.getItem('filters_declaracoes');
       if (savedFilters) {
         this.filters = { ...this.filters, ...JSON.parse(savedFilters) };
       }
     },
     saveFavoritos() {
-      localStorage.setItem('favoritos_lp_impostos', JSON.stringify(this.favoritos));
+      localStorage.setItem('favoritos', JSON.stringify(this.favoritos));
     },
     loadFavoritos() {
-      const savedFavoritos = localStorage.getItem('favoritos_lp_impostos');
+      const savedFavoritos = localStorage.getItem('favoritos');
       if (savedFavoritos) {
         this.favoritos = JSON.parse(savedFavoritos);
+      }
+    },
+    saveDeclaracoesToCache() {
+      localStorage.setItem('declaracoes_cache', JSON.stringify(this.declaracoes));
+    },
+    loadDeclaracoesFromCache() {
+      const cachedDeclaracoes = localStorage.getItem('declaracoes_cache');
+      if (cachedDeclaracoes) {
+        this.declaracoes = JSON.parse(cachedDeclaracoes);
       }
     },
     toggleFavorito(empresa) {
@@ -466,38 +398,40 @@ export default {
     }
   },
   computed: {
-    filteredImpostos() {
-      return this.impostos.filter(imposto => {
-        const isEntregueMatch = this.filters.entregue ? imposto.entregue : true;
-        const isNaoEntregueMatch = this.filters.naoEntregue ? !imposto.entregue : true;
-        const isNomeImpostoMatch = this.filters.nomeImposto.length === 0 || this.filters.nomeImposto.includes(imposto.nomeImposto) || this.filters.nomeImposto.includes("");
-        const isFavoritoMatch = this.filters.favoritos ? imposto.favorito : true;
-        return (!this.filters.razaoSocial || imposto.razaoSocial.toLowerCase().includes(this.filters.razaoSocial.toLowerCase())) &&
-               (!this.filters.nomeEstado || imposto.nomeEstado === this.filters.nomeEstado) &&
-               (!this.filters.responsavelFiscal || imposto.responsavelFiscal === this.filters.responsavelFiscal) &&
-               (!this.filters.formaDeFechamento || imposto.formaDeFechamento === this.filters.formaDeFechamento) &&
-               isNomeImpostoMatch &&
-               (!this.filters.mes || imposto.mes.toString() === this.filters.mes) &&
-               (!this.filters.ano || imposto.ano.toString() === this.filters.ano) &&
+    filteredDeclaracoes() {
+      return this.declaracoes.filter(declaracao => {
+        const isEntregueMatch = this.filters.entregue ? declaracao.entregue : true;
+        const isNaoEntregueMatch = this.filters.naoEntregue ? !declaracao.entregue : true;
+        const isNomeDeclaracaoMatch = this.filters.nomeDeclaracao.length === 0 || this.filters.nomeDeclaracao.includes(declaracao.nomeDeclaracao) || this.filters.nomeDeclaracao.includes("");
+        const isFavoritoMatch = this.filters.favoritos ? declaracao.favorito : true;
+        const isFormaEnvioMatch = !this.filters.formaEnvio || (declaracao.formaEnvio && declaracao.formaEnvio.split(', ').includes(this.filters.formaEnvio));
+        return (!this.filters.razaoSocial || declaracao.razaoSocial.toLowerCase().includes(this.filters.razaoSocial.toLowerCase())) &&
+               (!this.filters.nomeEstado || declaracao.nomeEstado === this.filters.nomeEstado) &&
+               (!this.filters.responsavelFiscal || declaracao.responsavelFiscal === this.filters.responsavelFiscal) &&
+               (!this.filters.formaDeFechamento || declaracao.formaDeFechamento === this.filters.formaDeFechamento) &&
+               isNomeDeclaracaoMatch &&
+               (!this.filters.mes || declaracao.mes.toString() === this.filters.mes) &&
+               (!this.filters.ano || declaracao.ano.toString() === this.filters.ano) &&
                isEntregueMatch &&
                isNaoEntregueMatch &&
-               isFavoritoMatch;
+               isFavoritoMatch &&
+               isFormaEnvioMatch;
       });
     },
-    groupedImpostos() {
-      const grouped = this.filteredImpostos.reduce((acc, imposto) => {
-        const empresa = acc.find(item => item.idEmpresa === imposto.idEmpresa);
+    groupedDeclaracoes() {
+      const grouped = this.filteredDeclaracoes.reduce((acc, declaracao) => {
+        const empresa = acc.find(item => item.idEmpresa === declaracao.idEmpresa);
         if (empresa) {
-          empresa.impostos.push(imposto);
+          empresa.declaracoes.push(declaracao);
         } else {
           acc.push({
-            idEmpresa: imposto.idEmpresa,
-            razaoSocial: imposto.razaoSocial,
-            nomeEstado: imposto.nomeEstado,
-            responsavelFiscal: imposto.responsavelFiscal,
-            formaDeFechamento: imposto.formaDeFechamento,
-            favorito: imposto.favorito,
-            impostos: [imposto]
+            idEmpresa: declaracao.idEmpresa,
+            razaoSocial: declaracao.razaoSocial,
+            nomeEstado: declaracao.nomeEstado,
+            responsavelFiscal: declaracao.responsavelFiscal,
+            formaDeFechamento: declaracao.formaDeFechamento,
+            favorito: declaracao.favorito,
+            declaracoes: [declaracao]
           });
         }
         return acc;
@@ -505,11 +439,12 @@ export default {
       return grouped;
     },
     naoEntreguesCount() {
-      return this.impostos.filter(imposto => !imposto.entregue).length;
+      return this.declaracoes.filter(declaracao => !declaracao.entregue).length;
     }
   }
 }
 </script>
+
 
 <style>
 #speed-dial-menu-bottom-right {
@@ -527,7 +462,7 @@ form {
 
 .section {
   width: 500px;
-  background-color: #161616; 
+  background-color: #161616;
   margin-left: 10px;
 }
 
@@ -543,7 +478,7 @@ form {
 }
 .modal-content {
   max-height: 90vh; 
-  overflow-y: auto;
+  overflow-y: auto; 
 }
 
 .buttonAlternar {

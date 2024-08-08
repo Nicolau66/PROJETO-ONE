@@ -123,7 +123,7 @@ export default {
         return;
       }
 
-      axios.post(`${apiUrl}/backend/dp_fiscal/vincular_empresa_especifica.php`, {
+      axios.post(`${apiUrl}/backend/funcionalidades/vincular_empresa_especifica.php`, {
         idMes: this.mesAno,
         idEmpresa: this.empresaSelecionada,
         idImpostos: this.impostosSelecionados,

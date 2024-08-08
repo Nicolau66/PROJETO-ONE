@@ -33,6 +33,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 const apiUrl = import.meta.env.VITE_API_URL;
+const STORED_PASSWORD = "senha123"; 
 
 export default {
   data() {
@@ -55,17 +56,21 @@ export default {
     },
     confirmDeleteEmpresa(idEmpresa) {
       Swal.fire({
-        title: 'Tem certeza?',
-        text: "Você não poderá desfazer esta ação!",
-        icon: 'warning',
+        title: 'Digite a senha para remover',
+        input: 'password',
+        inputAttributes: {
+          autocapitalize: 'off'
+        },
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sim, remover!',
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.deleteEmpresa(idEmpresa);
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar',
+        showLoaderOnConfirm: true,
+        preConfirm: (password) => {
+          if (password === STORED_PASSWORD) {
+            this.deleteEmpresa(idEmpresa);
+          } else {
+            Swal.showValidationMessage('Senha incorreta');
+          }
         }
       });
     },
@@ -79,13 +84,13 @@ export default {
         }
       })
       .then(response => {
-        console.log(response.data);  
+        console.log(response.data);
         if (response.data.success) {
-          this.fetchEmpresas(); 
+          this.fetchEmpresas();
           Swal.fire('Removida!', 'Empresa removida com sucesso.', 'success');
         } else {
           Swal.fire('Erro!', 'Erro ao remover a empresa: ' + response.data.message, 'error');
-          console.log(response.data.errors);  
+          console.log(response.data.errors);
         }
       })
       .catch(error => {

@@ -115,7 +115,7 @@
             <td class="py-3 px-6 text-center">
               <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
                 <span @click="confirmRemoveDeclaracao(declaracao, empresa.razaoSocial)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 cursor-pointer hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="small-icon text-red-600 cursor-pointer hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                 </span>
@@ -152,7 +152,7 @@
         <p><strong>Responsável Fiscal:</strong> {{ empresaDetalhes.responsavelFiscal }}</p>
         <p><strong>Responsável DP:</strong> {{ empresaDetalhes.ResponsavelDp }}</p>
         <p><strong>Certificado Emitido:</strong> {{ empresaDetalhes.certificadoEmitido == 1 ? 'Sim' : 'Não' }}</p>
-        <p><strong>Processo de Abertura/Alteração:</strong> {{ empresaDetalhes.processoAberturaAlteracao }}</p>
+        <p><strong>Prefeitura:</strong> {{ empresaDetalhes.processoAberturaAlteracao }}</p>
         <p><strong>Status:</strong> {{ empresaDetalhes.status }}</p>
         <p><strong>Forma de Envio:</strong> {{ empresaDetalhes.formaEnvio }}</p>
         <p><strong>Forma de Fechamento:</strong> {{ empresaDetalhes.formaDeFechamento }}</p>
@@ -290,18 +290,25 @@ export default {
     },
     updateEntrega(declaracao) {
       const apiUrl = import.meta.env.VITE_API_URL;
-      axios.post(`${apiUrl}/backend/dp_fiscal/mei/updateEntregaDeclaracaoMei.php`, {
+      console.log("Enviando dados para atualização:", {
         idEmpresa: declaracao.idEmpresa,
         idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes,
+        entregue: declaracao.entregue
+      });
+      axios.post(`${apiUrl}/backend/funcionalidades/update_entrega_declaracao.php`, {
+        idEmpresa: declaracao.idEmpresa,
+        idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes,
         entregue: declaracao.entregue
       })
-        .then(response => {
-          console.log('Status atualizado com sucesso:', response.data);
-        })
-        .catch(error => {
-          console.error('Erro ao atualizar status:', error);
-          declaracao.entregue = !declaracao.entregue;
-        });
+      .then(response => {
+        console.log('Status atualizado com sucesso:', response.data);
+      })
+      .catch(error => {
+        console.error('Erro ao atualizar status:', error);
+        declaracao.entregue = !declaracao.entregue;
+      });
     },
     confirmRemoveDeclaracao(declaracao, razaoSocial) {
       Swal.fire({
@@ -321,10 +328,10 @@ export default {
     },
     removeDeclaracao(declaracao) {
       const apiUrl = import.meta.env.VITE_API_URL;
-      axios.post(`${apiUrl}/backend/dp_fiscal/mei/removeDeclaracaoMei.php`, {
+      axios.post(`${apiUrl}/backend/funcionalidades/remove_declaracao.php`, {
         idEmpresa: declaracao.idEmpresa,
         idDeclaracao: declaracao.idDeclaracao,
-        idMes: declaracao.mes
+        idMes: declaracao.idMes
       })
         .then(response => {
           console.log('Declaração removida com sucesso:', response.data);
@@ -339,7 +346,7 @@ export default {
     },
     showDetails(idEmpresa) {
       const apiUrl = import.meta.env.VITE_API_URL;
-      axios.get(`${apiUrl}/backend/dp_fiscal/empresa_detalhes.php?idEmpresa=${idEmpresa}`)
+      axios.get(`${apiUrl}/backend/funcionalidades/empresa_detalhes.php?idEmpresa=${idEmpresa}`)
         .then(response => {
           this.empresaDetalhes = response.data;
         })

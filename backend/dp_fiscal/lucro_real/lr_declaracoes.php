@@ -2,13 +2,11 @@
 require_once('../../conexao.php');
 require_once('../../cors.php');
 
-
 if ($mysqli->connect_error) {
     die(json_encode(["error" => "Connection failed: " . $mysqli->connect_error]));
 }
 
 header('Content-Type: application/json');
-
 
 $sql = "
     SELECT 
@@ -17,7 +15,8 @@ $sql = "
         empresa.responsavelFiscal, 
         empresa.formaDeFechamento, 
         declaracao.idDeclaracao, 
-        declaracao.nomeDeclaracao, 
+        declaracao.nomeDeclaracao,
+        mes.idMes,         /* Adiciona idMes à seleção */
         mes.mes, 
         mes.ano, 
         entregadeclaracao.entregue,
@@ -43,7 +42,7 @@ $sql = "
         regimetributario.tipoRegime = 'Lucro Real' AND 
         declaracao.departamento = 'Fiscal'  -- Filtrando apenas declarações do departamento fiscal
     GROUP BY 
-        empresa.idEmpresa, declaracao.idDeclaracao, mes.mes, mes.ano
+        empresa.idEmpresa, declaracao.idDeclaracao, mes.idMes, mes.mes, mes.ano
 ";
 
 $result = $mysqli->query($sql);
@@ -56,7 +55,6 @@ if ($result === false) {
 $data = [];
 
 if ($result->num_rows > 0) {
-    
     while($row = $result->fetch_assoc()) {
         $data[] = [
             "idEmpresa" => $row["idEmpresa"],
@@ -65,6 +63,7 @@ if ($result->num_rows > 0) {
             "formaDeFechamento" => $row["formaDeFechamento"],
             "idDeclaracao" => $row["idDeclaracao"],
             "nomeDeclaracao" => $row["nomeDeclaracao"],
+            "idMes" => $row["idMes"],    /* Adiciona idMes ao array de dados */
             "mes" => $row["mes"],
             "ano" => $row["ano"],
             "entregue" => $row["entregue"] ? true : false,
@@ -76,9 +75,7 @@ if ($result->num_rows > 0) {
     $data = ["message" => "Nenhum dado encontrado"];
 }
 
-
 $mysqli->close();
-
 
 echo json_encode($data);
 ?>

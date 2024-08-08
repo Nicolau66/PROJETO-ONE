@@ -2,10 +2,10 @@
   <div class="container mx-auto p-4 dark:text-white" id="containerOne">
     <div class="overflow-x-auto mt-1">
       <div class="flex justify-center items-center mb-8">
-        <img src="/src/assets/img/banco_de_dados/formulario/LogoLucroPresumido.png" id="logo1">
-        <h2 class="text-3xl font-bold">Impostos do Lucro Presumido</h2>
+        <img src="/src/assets/img/banco_de_dados/formulario/LogoSimples.png" id="logo1">
+        <h2 class="text-3xl font-bold">Impostos do Simples Nacional</h2>
       </div>
-      <p class="text-center text-gray-500">Gerencie os impostos das empresas cadastradas no Lucro Presumido de forma fácil e eficiente.</p>
+      <p class="text-center text-gray-500">Gerencie os impostos das empresas cadastradas no Simples Nacional de forma fácil e eficiente.</p>
       <br>
       <br>
       <div class="flex justify-between items-center mb-4">
@@ -30,8 +30,8 @@
         </form>
         <div class="flex space-x-4">
           <div class="buttonAlternar">
-            <router-link to="/lucro_presumido" class="bg-blue-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded bg-sky-400">
-              Ir para declarações
+            <router-link to="/simples_nacional" class="bg-blue-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded bg-yellow-600">
+              Voltar para Declarações
             </router-link>
           </div>
           <!-- Mês -->
@@ -51,17 +51,17 @@
           <!-- Entregue -->
           <div class="flex items-center">
             <label class="block text-sm font-medium text-gray-300 mb-1 mr-2">Entregue</label>
-            <input type="checkbox" v-model="filters.entregue" @change="saveFilters" class="bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            <input type="checkbox" v-model="filters.entregue" @change="saveFilters" class="small-checkbox bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
           </div>
           <!-- Não Entregue -->
           <div class="flex items-center">
             <label class="block text-sm font-medium text-gray-300 mb-1 mr-2">Não Entregue</label>
-            <input type="checkbox" v-model="filters.naoEntregue" @change="saveFilters" class="bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            <input type="checkbox" v-model="filters.naoEntregue" @change="saveFilters" class="small-checkbox bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
           </div>
           <!-- Favoritos -->
           <div class="flex items-center">
             <label class="block text-sm font-medium text-gray-300 mb-1 mr-2">Favoritos</label>
-            <input type="checkbox" v-model="filters.favoritos" @change="saveFilters" class="bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            <input type="checkbox" v-model="filters.favoritos" @change="saveFilters" class="small-checkbox bg-gray-700 border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"/>
           </div>
         </div>
       </div>
@@ -112,12 +112,12 @@
             </td>
             <td class="py-3 px-6 text-left">
               <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                <button @click="openModal(imposto, empresa.idEmpresa)" class="text-blue-500 hover:text-blue-700">Valor</button>
+                <button @click="openModal(imposto)" class="text-blue-500 hover:text-blue-700">Valor</button>
               </div>
             </td>
             <td class="py-3 px-6 text-center">
               <div v-for="imposto in empresa.impostos" :key="imposto.idImposto">
-                <input type="checkbox" v-model="imposto.entregue" @change="confirmUpdateEntrega(imposto, empresa.razaoSocial)" class="small-checkbox form-checkbox text-blue-600"/>
+                <input type="checkbox" v-model="imposto.entregue" @change="confirmUpdateEntrega(imposto, empresa.razaoSocial, imposto.mes)" class="small-checkbox form-checkbox text-blue-600"/>
               </div>
             </td>
             <td class="py-3 px-6 text-center">
@@ -293,28 +293,36 @@ export default {
     };
   },
   created() {
-    this.fetchImpostos();
+    this.saveImpostosToCache()
     this.loadFilters();
     this.loadFavoritos();
+    this.fetchImpostos();
   },
   methods: {
     fetchImpostos() {
-      axios.get(`${apiUrl}/backend/dp_fiscal/lucro_presumido/lp_impostos.php`)
+      axios.get(`${apiUrl}/backend/dp_fiscal/simples_nacional/sn_impostos.php`)
         .then(response => {
           this.impostos = response.data.map(imposto => {
             imposto.favorito = this.favoritos.includes(imposto.idEmpresa);
             return imposto;
           });
+          this.saveImpostosToCache();
         })
         .catch(error => {
           console.error("Houve um erro ao buscar os dados:", error);
         });
     },
+    saveImpostosToCache() {
+      localStorage.setItem('cached_impostos', JSON.stringify(this.impostos));
+    },
+    invalidateCache() {
+      localStorage.removeItem('cached_impostos');
+    },
     uniqueValues(key) {
       const values = this.impostos.flatMap(imposto => imposto[key] ? imposto[key].split(', ') : []);
       return [...new Set(values)];
     },
-    confirmUpdateEntrega(imposto, razaoSocial) {
+    confirmUpdateEntrega(imposto, razaoSocial, mes) {
       const statusText = imposto.entregue ? 'entregue' : 'não entregue';
       Swal.fire({
         title: 'Tem certeza?',
@@ -327,7 +335,7 @@ export default {
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-          this.updateEntrega(imposto);
+          this.updateEntrega(imposto, mes);
         } else {
           imposto.entregue = !imposto.entregue;
         }
@@ -342,14 +350,16 @@ export default {
       })
       .then(response => {
         console.log('Status atualizado com sucesso:', response.data);
+        this.invalidateCache();
+        this.fetchImpostos();
       })
       .catch(error => {
         console.error('Erro ao atualizar status:', error);
         imposto.entregue = !imposto.entregue;
       });
     },
-    openModal(imposto, idEmpresa) {
-      this.impostoParaEditar = { ...imposto, idEmpresa: idEmpresa };
+    openModal(imposto) {
+      this.impostoParaEditar = { ...imposto };
       axios.get(`${apiUrl}/backend/funcionalidades/get_valor_imposto.php`, {
         params: {
           idEmpresa: imposto.idEmpresa,
@@ -371,20 +381,18 @@ export default {
       axios.post(`${apiUrl}/backend/funcionalidades/update_valor_imposto.php`, {
         idEmpresa: this.impostoParaEditar.idEmpresa,
         idImposto: this.impostoParaEditar.idImposto,
-        idMes: this.impostoParaEditar.idMes,
-        valorImposto: this.impostoParaEditar.valorImposto
+        valorImposto: this.impostoParaEditar.valorImposto,
+        idMes: this.impostoParaEditar.idMes
       })
       .then(response => {
         console.log('Valor do imposto atualizado com sucesso:', response.data);
-        if (response.data.success) {
-          const imposto = this.impostos.find(i => i.idImposto === this.impostoParaEditar.idImposto && i.idEmpresa === this.impostoParaEditar.idEmpresa && i.mes === this.impostoParaEditar.mes);
-          if (imposto) {
-            imposto.valorImposto = this.impostoParaEditar.valorImposto;
-          }
-          this.fecharModal();
-        } else {
-          console.error('Erro na resposta da API:', response.data.error);
+        const imposto = this.impostos.find(i => i.idImposto === this.impostoParaEditar.idImposto);
+        if (imposto) {
+          imposto.valorImposto = this.impostoParaEditar.valorImposto;
         }
+        this.fecharModal();
+        this.invalidateCache();
+        this.fetchImpostos();
       })
       .catch(error => {
         console.error('Erro ao atualizar valor do imposto:', error);
@@ -406,15 +414,21 @@ export default {
         }
       });
     },
-    removeImposto(imposto, mes) {
+    removeImposto(imposto) {
       axios.post(`${apiUrl}/backend/funcionalidades/remove_impostos.php`, {
         idEmpresa: imposto.idEmpresa,
         idImposto: imposto.idImposto,
         idMes: imposto.idMes
       })
       .then(response => {
-        console.log('Imposto removido com sucesso:', response.data);
-        this.impostos = this.impostos.filter(i => !(i.idEmpresa === imposto.idEmpresa && i.idImposto === imposto.idImposto && i.mes === imposto.mes));
+        if (response.data.success) {
+          this.impostos = this.impostos.filter(i => !(i.idEmpresa === imposto.idEmpresa && i.idImposto === imposto.idImposto && i.idMes === imposto.idMes));
+          this.saveImpostosToCache();
+        } else {
+          console.error('Erro ao remover imposto:', response.data.error);
+        }
+        this.invalidateCache();
+        this.fetchImpostos();
       })
       .catch(error => {
         console.error('Erro ao remover imposto:', error);
@@ -434,19 +448,19 @@ export default {
     },
     saveFilters() {
       const { razaoSocial, ...filtersToSave } = this.filters;
-      localStorage.setItem('filters_lp_impostos', JSON.stringify(filtersToSave));
+      localStorage.setItem('filters_impostos', JSON.stringify(filtersToSave));
     },
     loadFilters() {
-      const savedFilters = localStorage.getItem('filters_lp_impostos');
+      const savedFilters = localStorage.getItem('filters_impostos');
       if (savedFilters) {
         this.filters = { ...this.filters, ...JSON.parse(savedFilters) };
       }
     },
     saveFavoritos() {
-      localStorage.setItem('favoritos_lp_impostos', JSON.stringify(this.favoritos));
+      localStorage.setItem('favoritos_impostos', JSON.stringify(this.favoritos));
     },
     loadFavoritos() {
-      const savedFavoritos = localStorage.getItem('favoritos_lp_impostos');
+      const savedFavoritos = localStorage.getItem('favoritos_impostos');
       if (savedFavoritos) {
         this.favoritos = JSON.parse(savedFavoritos);
       }
@@ -459,7 +473,7 @@ export default {
       }
       empresa.favorito = !empresa.favorito;
       this.saveFavoritos();
-      this.$forceUpdate(); 
+      this.$forceUpdate();
     },
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
@@ -471,6 +485,7 @@ export default {
         const isEntregueMatch = this.filters.entregue ? imposto.entregue : true;
         const isNaoEntregueMatch = this.filters.naoEntregue ? !imposto.entregue : true;
         const isNomeImpostoMatch = this.filters.nomeImposto.length === 0 || this.filters.nomeImposto.includes(imposto.nomeImposto) || this.filters.nomeImposto.includes("");
+        const isFormaEnvioMatch = this.filters.formaEnvio.length === 0 || (imposto.formaEnvio && this.filters.formaEnvio.some(envio => imposto.formaEnvio.includes(envio)));
         const isFavoritoMatch = this.filters.favoritos ? imposto.favorito : true;
         return (!this.filters.razaoSocial || imposto.razaoSocial.toLowerCase().includes(this.filters.razaoSocial.toLowerCase())) &&
                (!this.filters.nomeEstado || imposto.nomeEstado === this.filters.nomeEstado) &&
@@ -481,7 +496,8 @@ export default {
                (!this.filters.ano || imposto.ano.toString() === this.filters.ano) &&
                isEntregueMatch &&
                isNaoEntregueMatch &&
-               isFavoritoMatch;
+               isFavoritoMatch &&
+               isFormaEnvioMatch;
       });
     },
     groupedImpostos() {
@@ -511,6 +527,8 @@ export default {
 }
 </script>
 
+
+
 <style>
 #speed-dial-menu-bottom-right {
   background-color: #1f1f1f; 
@@ -533,7 +551,7 @@ form {
 
 .card {
   width: 500px;
-  background-color: #1a1a1a; 
+  background-color: #1a1a1a;
 }
 
 .fixed.inset-0 {
@@ -543,7 +561,7 @@ form {
 }
 .modal-content {
   max-height: 90vh; 
-  overflow-y: auto;
+  overflow-y: auto; 
 }
 
 .buttonAlternar {
@@ -558,21 +576,13 @@ form {
   color: #6B7280;
 }
 
-#logo1 {
-  width: 50px; 
-  height: 50px; 
-  margin: 0;
-  padding: 0;
-  scale: 2;
-}
-
 .small-checkbox {
-  height: 1rem;
-  width: 1rem;
+  width: 16px;
+  height: 16px;
 }
 
 .small-icon {
-  height: 1.3rem;
-  width: 1.3rem;
+  width: 20px;
+  height: 20px;
 }
 </style>

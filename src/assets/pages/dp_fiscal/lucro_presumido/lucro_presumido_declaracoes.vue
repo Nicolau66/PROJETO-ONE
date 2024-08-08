@@ -4,7 +4,6 @@
       <div class="flex justify-center items-center mb-8">
         <img src="/src/assets/img/banco_de_dados/formulario/LogoLucroPresumido.png" id="logo1">
         <h2 class="text-3xl font-bold">Declarações do Lucro Presumido</h2>
-        
       </div>
       <p class="text-center text-gray-500">Gerencie as declarações das empresas cadastradas no Lucro Presumido de forma fácil e eficiente.</p>
       <br>
@@ -118,7 +117,7 @@
             <td class="py-3 px-6 text-center">
               <div v-for="declaracao in empresa.declaracoes" :key="declaracao.idDeclaracao">
                 <span @click="confirmRemoveDeclaracao(declaracao, empresa.razaoSocial)">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-600 cursor-pointer hover:text-red-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="small-icon text-red-600 cursor-pointer hover:text-red-80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                   </svg>
                 </span>
@@ -135,7 +134,7 @@
       </div>
     </div>
 
-    
+    <!-- Modal existente -->
     <div v-if="empresaDetalhes" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-2/3 max-w-4xl modal-content">
         <div class="flex justify-between items-center">
@@ -155,17 +154,17 @@
         <p><strong>Responsável Fiscal:</strong> {{ empresaDetalhes.responsavelFiscal }}</p>
         <p><strong>Responsável DP:</strong> {{ empresaDetalhes.ResponsavelDp }}</p>
         <p><strong>Certificado Emitido:</strong> {{ empresaDetalhes.certificadoEmitido == 1 ? 'Sim' : 'Não' }}</p>
-        <p><strong>Processo de Abertura/Alteração:</strong> {{ empresaDetalhes.processoAberturaAlteracao }}</p>
+        <p><strong>Prefeitura:</strong> {{ empresaDetalhes.processoAberturaAlteracao }}</p>
         <p><strong>Status:</strong> {{ empresaDetalhes.status }}</p>
         <p><strong>Forma de Envio:</strong> {{ empresaDetalhes.formaEnvio }}</p>
         <p><strong>Forma de Fechamento:</strong> {{ empresaDetalhes.formaDeFechamento }}</p>
       </div>
     </div>
 
-   
+    <!-- Speed Dial Menu -->
     <div data-dial-init class="fixed end-6 bottom-6">
       <div id="speed-dial-menu-bottom-right" :class="{'flex': isMenuOpen, 'hidden': !isMenuOpen}" class="flex-col items-center mb-4 space-y-4 dark:bg-gray-700 p-6 rounded-lg shadow-lg">
-        
+        <!-- Estado -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Estado</label>
           <select v-model="filters.nomeEstado" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
@@ -173,7 +172,7 @@
             <option v-for="option in uniqueValues('nomeEstado')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
-        
+        <!-- Responsável Fiscal -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Responsável Fiscal</label>
           <select v-model="filters.responsavelFiscal" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
@@ -181,7 +180,7 @@
             <option v-for="option in uniqueValues('responsavelFiscal')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
-       
+        <!-- Forma de Fechamento -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Forma de Fechamento</label>
           <select v-model="filters.formaDeFechamento" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
@@ -189,7 +188,7 @@
             <option v-for="option in uniqueValues('formaDeFechamento')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
-        
+        <!-- Declaração -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Declaração</label>
           <select multiple v-model="filters.nomeDeclaracao" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
@@ -197,7 +196,7 @@
             <option v-for="option in uniqueValues('nomeDeclaracao')" :key="option" :value="option">{{ option }}</option>
           </select>
         </div>
-        
+        <!-- Forma de Envio -->
         <div class="w-full mb-4">
           <label class="block text-lg font-bold text-gray-300 mb-2">Forma de Envio</label>
           <select multiple v-model="filters.formaEnvio" @change="saveFilters" class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white">
@@ -239,7 +238,8 @@ export default {
       },
       empresaDetalhes: null,
       isMenuOpen: false,
-      favoritos: []
+      favoritos: [],
+      declaracaoParaEditar: null
     };
   },
 
@@ -253,7 +253,7 @@ export default {
       const apiUrl = import.meta.env.VITE_API_URL;
       axios.get(`${apiUrl}/backend/dp_fiscal/lucro_presumido/lp_declaracoes.php`)
         .then(response => {
-          console.log('Dados recebidos:', response.data);
+          //console.log('Dados recebidos:', response.data);
           this.declaracoes = response.data.map(declaracao => {
             declaracao.favorito = this.favoritos.includes(declaracao.idEmpresa);
             return declaracao;
@@ -271,7 +271,7 @@ export default {
       const statusText = declaracao.entregue ? 'entregue' : 'não entregue';
       Swal.fire({
         title: 'Tem certeza?',
-        text: `Você deseja marcar a declaração ${declaracao.nomeDeclaracao} da empresa ${razaoSocial} como ${statusText}?`,
+        text: `Você deseja marcar a declaração ${declaracao.nomeDeclaracao} da empresa ${razaoSocial} como ${statusText} no mês ${declaracao.mes}/${declaracao.ano}?`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -286,11 +286,18 @@ export default {
         }
       });
     },
-    updateEntrega(declaracao) {
+    updateEntrega(declaracao, mes) {
       const apiUrl = import.meta.env.VITE_API_URL;
-      axios.post(`${apiUrl}/backend/dp_fiscal/lucro_presumido/update_entrega.php`, {
+      console.log("Enviando dados para atualização:", {
         idEmpresa: declaracao.idEmpresa,
         idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes,
+        entregue: declaracao.entregue
+      });
+      axios.post(`${apiUrl}/backend/funcionalidades/update_entrega_declaracao.php`, {
+        idEmpresa: declaracao.idEmpresa,
+        idDeclaracao: declaracao.idDeclaracao,
+        idMes: declaracao.idMes,
         entregue: declaracao.entregue
       })
       .then(response => {
@@ -319,14 +326,15 @@ export default {
     },
     removeDeclaracao(declaracao) {
       const apiUrl = import.meta.env.VITE_API_URL;
-      axios.post(`${apiUrl}/backend/dp_fiscal/lucro_presumido/remove_declaracao.php`, {
+      axios.post(`${apiUrl}/backend/funcionalidades/remove_declaracao.php`, {
         idEmpresa: declaracao.idEmpresa,
         idDeclaracao: declaracao.idDeclaracao,
-        idMes: declaracao.mes
+        idMes: declaracao.idMes,
+        ano: declaracao.ano
       })
       .then(response => {
         console.log('Declaração removida com sucesso:', response.data);
-        this.declaracoes = this.declaracoes.filter(d => !(d.idEmpresa === declaracao.idEmpresa && d.idDeclaracao === declaracao.idDeclaracao && d.mes === declaracao.mes));
+        this.declaracoes = this.declaracoes.filter(d => !(d.idEmpresa === declaracao.idEmpresa && d.idDeclaracao === declaracao.idDeclaracao && d.mes === declaracao.mes && d.ano === declaracao.ano));
       })
       .catch(error => {
         console.error('Erro ao remover declaração:', error);
@@ -337,7 +345,7 @@ export default {
     },
     showDetails(idEmpresa) {
       const apiUrl = import.meta.env.VITE_API_URL;
-      axios.get(`${apiUrl}/backend/dp_fiscal/empresa_detalhes.php?idEmpresa=${idEmpresa}`)
+      axios.get(`${apiUrl}/backend/funcionalidades/empresa_detalhes.php?idEmpresa=${idEmpresa}`)
         .then(response => {
           this.empresaDetalhes = response.data;
         })
@@ -424,8 +432,6 @@ export default {
 }
 </script>
 
-
-
 <style>
 #speed-dial-menu-bottom-right {
   background-color: #1f1f1f; 
@@ -475,10 +481,19 @@ form {
 
 #logo1 {
   width: 50px; 
-  height: 50x; 
+  height: 50px; 
   margin: 0;
   padding: 0;
   scale: 2;
-  }
+}
 
+.form-checkbox {
+  height: 1rem;
+  width: 1rem;
+}
+
+.small-icon {
+  height: 1.3rem;
+  width: 1.3rem;
+}
 </style>
