@@ -1,4 +1,4 @@
-# GERENCIADOR DE ENTREGAS DECLARAÇÕES E IMPOSTOS.
+# GERENCIADOR DE ENTREGAS DE DECLARAÇÕES E IMPOSTOS.
 
 Desenvolvimento de Aplicação para Escritório de Contabilidade
 
