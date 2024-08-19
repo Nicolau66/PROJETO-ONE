@@ -1,4 +1,4 @@
-# PROJETO ONE
+# GERENCIADOR DE ENTREGAS DECLARAÇÕES E IMPOSTOS.
 
 Desenvolvimento de Aplicação para Escritório de Contabilidade
 
