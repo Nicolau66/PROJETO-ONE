@@ -7,7 +7,7 @@ O objetivo desta aplicação é otimizar a gestão de declarações e impostos p
 
 
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+
 
 ## Project Setup
 
